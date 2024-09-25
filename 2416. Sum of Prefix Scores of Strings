@@ -1,0 +1,84 @@
+Approach : Trie
+Time complexity : O(N*L)
+
+class Trie {
+    static class Node {
+        Node[] links;
+        int cntPrefix;
+
+        Node() {
+            links = new Node[26];
+            cntPrefix = 0;
+        }
+
+        // contains
+        boolean containsKey(char ch) {
+            return links[ch-'a'] != null;
+        }
+
+        //get child node
+        Node get(char ch) {
+            return links[ch - 'a'];
+        }
+
+        //Insert
+        void put(char ch, Node node) {
+            links[ch-'a'] = node;
+        }
+
+        //increment prefix
+        void increasePrefix() {
+            cntPrefix++;
+        }
+    }
+
+    private Node root;
+    Trie() {
+        root = new Node();
+    }
+
+    //function to insertWord
+    void insert(String word) {
+        Node node = root;
+
+        for(int i=0;i<word.length();i++) {
+            if(!node.containsKey(word.charAt(i))) {
+                node.put(word.charAt(i),new Node());
+            }
+
+            node = node.get(word.charAt(i));
+            node.increasePrefix();
+        }
+    }
+
+    int checkPrefixCount(String word) {
+        Node node = root;
+        int count = 0;
+        for(int i=0;i<word.length();i++) {
+            if(!node.containsKey(word.charAt(i))) {
+                break;
+            }
+
+            node = node.get(word.charAt(i));
+            count += node.cntPrefix;
+        }
+        return count;
+    }
+}
+
+class Solution {
+    public int[] sumPrefixScores(String[] words) {
+        Trie trie = new Trie();
+
+        for(String s : words) {
+            trie.insert(s);
+        }
+
+        int[] result = new int[words.length];
+        int k = 0;
+        for(String s : words) {
+            result[k++] = trie.checkPrefixCount(s);
+        }
+        return result;
+    }
+}
